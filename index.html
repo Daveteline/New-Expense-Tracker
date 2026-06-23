@@ -70,7 +70,7 @@
       <!-- Tab Dashboard -->
       <div id="tab-dashboard" class="tab-content active space-y-6">
         
-        <!-- Baris Metrik Atas (Sudah Diperkecil & Mikro-Responsif) -->
+        <!-- Baris Metrik Atas -->
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 min-w-0">
           <!-- Target Budget -->
           <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
@@ -150,15 +150,16 @@
           </div>
         </div>
 
-        <!-- Bagian Grafik (REVISI FINAL: SEIMBANG & KUMPUL DI TENGAH PADA DESKTOP) -->
+        <!-- Bagian Grafik (REVISI TOTAL: Sesuai Coretan Denah Manual - Kumpul Rapi di Tengah-Tengah Kartu) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- KARTU 1: KONTRIBUSI ANGGARAN -->
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
             <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Bagian Kontribusi Anggaran</h4>
-            <div class="flex flex-col sm:flex-row gap-5 items-center justify-center">
+            <!-- max-w-md / lg memaksa kelompok konten tetap mengunci rapat di area tengah kartu -->
+            <div class="flex flex-col sm:flex-row gap-6 items-center justify-center mx-auto max-w-md sm:max-w-lg">
               <div class="relative w-36 h-36 shrink-0"><canvas id="chartKontribusi"></canvas></div>
-              <!-- sm:max-w-[280px] mengunci kotak agar tidak molor panjang ke kanan pada komputer -->
-              <div id="rekapUserBox" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs font-semibold w-full sm:max-w-[280px]">
+              <!-- sm:w-[280px] mengunci ukuran lebar kotak secara mutlak, anti-melar ke kanan -->
+              <div id="rekapUserBox" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs font-semibold w-full sm:w-[280px] shrink-0">
                 <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
                   <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Harley</span>
                   <span id="txtInfoHarley" class="font-bold text-slate-800">0% (Rp0)</span>
@@ -174,10 +175,11 @@
           <!-- KARTU 2: DISTRIBUSI KATEGORI -->
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
             <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Distribusi & Rekap Kategori</h4>
-            <div class="flex flex-col sm:flex-row gap-5 items-center justify-center">
+            <!-- max-w-md / lg memaksa kelompok konten tetap mengunci rapat di area tengah kartu -->
+            <div class="flex flex-col sm:flex-row gap-6 items-center justify-center mx-auto max-w-md sm:max-w-lg">
               <div class="relative w-36 h-36 shrink-0"><canvas id="chartKategori"></canvas></div>
-              <!-- sm:max-w-[280px] mengunci tabel agar tetap proporsional dan padat di tengah -->
-              <div class="border border-slate-100 rounded-xl bg-slate-50 p-3 h-auto min-h-[144px] flex flex-col justify-start w-full sm:max-w-[280px]">
+              <!-- sm:w-[280px] mengunci ukuran lebar tabel, ukurannya sama persis seperti kotak Kartu 1 (Simetris Total) -->
+              <div class="border border-slate-100 rounded-xl bg-slate-50 p-3 h-auto min-h-[144px] flex flex-col justify-start w-full sm:w-[280px] shrink-0">
                 <table class="w-full text-left text-[11px]">
                   <thead>
                     <tr class="text-slate-400 font-bold border-b border-slate-200 uppercase"><th class="pb-1.5">Kategori</th><th class="pb-1.5 text-right">Total Biaya</th></tr>
@@ -288,7 +290,7 @@
     Chart.register(ChartDataLabels);
 
     // =========================================================
-    // KUNCI JEMBATAN API: MASUKKAN URL EXEC WEB APP GAS ANDA
+    // KUNCI JEMBATAN API: MASUKKAN URL EXEC WEB APP GOOGLE APPS SCRIPT ANDA
     // =========================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzTTNELUIXfiBqWhxr8kzbf-lUYzmQ0n6in-RUz5MH3j9aIm4eo8W8KPjuRXsQq-oE1Pw/exec"; 
 
