@@ -144,7 +144,7 @@
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
             <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Bagian Kontribusi Anggaran</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-center w-full">
-              <div class="mx-auto w-full max-w-[144px] aspect-square relative"><canvas id="chartKontribusi"></canvas></div>
+              <div class="mx-auto w-full max-w-[144px] sm:max-w-[170px] md:max-w-[190px] aspect-square relative"><canvas id="chartKontribusi"></canvas></div>
               <div id="rekapUserBox" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs font-semibold w-full">
                 <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
                   <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Harley</span>
@@ -161,7 +161,7 @@
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
             <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Distribusi & Rekap Kategori</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-center w-full">
-              <div class="mx-auto w-full max-w-[144px] aspect-square relative"><canvas id="chartKategori"></canvas></div>
+              <div class="mx-auto w-full max-w-[144px] sm:max-w-[170px] md:max-w-[190px] aspect-square relative"><canvas id="chartKategori"></canvas></div>
               <div class="border border-slate-100 rounded-xl bg-slate-50 p-3 h-auto min-h-[144px] flex flex-col justify-start w-full">
                 <table class="w-full text-left text-[11px]">
                   <thead>
@@ -404,7 +404,6 @@
       updateCharts(data, pctH, pctR);
     }
 
-    // KONFIGURASI TOTAL CHARTJS YANG RESPONSIF MENURUTI BOX GRID HTML
     function updateCharts(data, pctH, pctR) {
       if(chartKontribusiInstance) chartKontribusiInstance.destroy();
       if(chartKategoriInstance) chartKategoriInstance.destroy();
@@ -431,7 +430,7 @@
         }
       });
 
-      // Chart Kategori (Sekarang Di-render Sempurna Sejajar Dengan Kontribusi)
+      // Chart Kategori
       let katLabels = Object.keys(data.kategori);
       let katValues = Object.values(data.kategori);
       chartKategoriInstance = new Chart(document.getElementById('chartKategori'), {
