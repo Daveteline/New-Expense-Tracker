@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Expense Tracker</title>
   
-  <!-- Ikon Premium Terbaca Sempurna Tanpa Iframe Terikat Google -->
   <link rel="icon" type="image/png" sizes="192x192" href="https://dl.dropboxusercontent.com/scl/fi/j18pzuzopw34yrk2aivt1/Icon_Expense_Tracker.png?rlkey=hesbb0vzsoq6131353x104var&raw=1">
   <link rel="apple-touch-icon" sizes="180x180" href="https://dl.dropboxusercontent.com/scl/fi/j18pzuzopw34yrk2aivt1/Icon_Expense_Tracker.png?rlkey=hesbb0vzsoq6131353x104var&raw=1">
 
@@ -30,7 +29,6 @@
   <div class="fixed inset-0 overflow-y-auto bg-[#f8fafc] p-4 md:p-6 pb-32">
     <div class="max-w-7xl mx-auto space-y-6">
       
-      <!-- Top Bar Menu -->
       <div class="flex flex-col lg:flex-row justify-between items-center bg-white p-4 rounded-2xl shadow-xs border border-slate-100 gap-4">
         <div class="flex items-center space-x-2">
           <div class="text-2xl">💳</div>
@@ -67,10 +65,9 @@
         <span id="toastIcon">💡</span> <span id="toastMessage">Sistem Ready</span>
       </div>
 
-      <!-- Tab Dashboard -->
       <div id="tab-dashboard" class="tab-content active space-y-6">
+        
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 min-w-0">
-          <!-- Target Budget -->
           <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
             <div>
               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Budget</p>
@@ -85,29 +82,24 @@
               </div>
             </div>
           </div>
-          <!-- Hari Ini -->
           <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-1.5 min-w-0">
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-amber-50 rounded-lg text-amber-500 shrink-0">📅</div>
             <div class="min-w-0"><p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Hari Ini</p><h3 id="txtHariIni" class="text-xs sm:text-sm font-bold text-slate-800 tracking-tight">Rp0</h3></div>
           </div>
-          <!-- Minggu Ini -->
           <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-1.5 min-w-0">
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-purple-50 rounded-lg text-purple-500 shrink-0">🗓️</div>
             <div class="min-w-0"><p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Minggu Ini</p><h3 id="txtMingguIni" class="text-xs sm:text-sm font-bold text-slate-800 tracking-tight">Rp0</h3></div>
           </div>
-          <!-- Rata-rata Harian -->
           <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-1.5 min-w-0">
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-indigo-50 rounded-lg text-indigo-500 shrink-0">📈</div>
             <div class="min-w-0"><p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Rata-Rata Harian</p><h3 id="txtRataRata" class="text-xs sm:text-sm font-bold text-slate-800 tracking-tight">Rp0</h3></div>
           </div>
-          <!-- Prediksi Akhir Bulan -->
           <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-1.5 min-w-0">
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-emerald-50 rounded-lg text-emerald-500 shrink-0">🔮</div>
             <div class="min-w-0"><p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Prediksi Akhir Bln</p><h3 id="txtPrediksi" class="text-xs sm:text-sm font-bold text-emerald-600 tracking-tight">Rp0</h3></div>
           </div>
         </div>
 
-        <!-- User Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -148,42 +140,46 @@
           </div>
         </div>
 
-        <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
-    <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Bagian Kontribusi Anggaran</h4>
-    <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
-      <div class="relative w-36 h-36 shrink-0"><canvas id="chartKontribusi"></canvas></div>
-      <div id="rekapUserBox" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs font-semibold w-full">
-        <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Harley</span>
-          <span id="txtInfoHarley" class="font-bold text-slate-800">0% (Rp0)</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span> Rachel</span>
-          <span id="txtInfoRachel" class="font-bold text-slate-800">0% (Rp0)</span>
-        </div>
-      </div>
-    </div>
-  </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+            <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Bagian Kontribusi Anggaran</h4>
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <div class="relative w-36 h-36 shrink-0"><canvas id="chartKontribusi"></canvas></div>
+              <div id="rekapUserBox" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs font-semibold w-full">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Harley</span>
+                  <span id="txtInfoHarley" class="font-bold text-slate-800">0% (Rp0)</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span> Rachel</span>
+                  <span id="txtInfoRachel" class="font-bold text-slate-800">0% (Rp0)</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-  <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
-    <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Distribusi & Rekap Kategori</h4>
-    <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
-      <div class="relative w-36 h-36 shrink-0"><canvas id="chartKategori"></canvas></div>
-      <div class="border border-slate-100 rounded-xl bg-slate-50 p-3 h-auto min-h-[144px] flex flex-col justify-start w-full">
-        <table class="w-full text-left text-[11px]">
-          <thead>
-            <tr class="text-slate-400 font-bold border-b border-slate-200 uppercase"><th class="pb-1.5">Kategori</th><th class="pb-1.5 text-right">Total</th></tr>
-          </thead>
-          <tbody id="tabelRekapKategori" class="text-slate-700 font-medium divide-y divide-slate-100"></tbody>
-        </table>
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+            <h4 class="text-xs font-bold text-slate-600 mb-4 uppercase tracking-wider">Distribusi & Rekap Kategori</h4>
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <div class="relative w-36 h-36 shrink-0"><canvas id="chartKategori"></canvas></div>
+              <div class="border border-slate-100 rounded-xl bg-slate-50 p-3 h-auto min-h-[144px] flex flex-col justify-start w-full">
+                <table class="w-full text-left text-[11px]">
+                  <thead>
+                    <tr class="text-slate-400 font-bold border-b border-slate-200 uppercase"><th class="pb-1.5">Kategori</th><th class="pb-1.5 text-right">Total Biaya</th></tr>
+                  </thead>
+                  <tbody id="tabelRekapKategori" class="text-slate-700 font-medium divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+          <h4 class="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider text-center">Perbandingan Tren Mingguan (M1 - M5)</h4>
+          <div class="h-44"><canvas id="chartMingguan"></canvas></div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-        
-      <!-- Tab Input Transaksi -->
+
       <div id="tab-input" class="tab-content space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs space-y-4">
@@ -249,7 +245,6 @@
         </div>
       </div>
 
-      <!-- Tab Set Budget -->
       <div id="tab-budget" class="tab-content space-y-6">
         <div class="max-w-md mx-auto bg-white p-6 rounded-2xl border border-slate-100 shadow-md space-y-4">
           <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
@@ -276,7 +271,7 @@
     Chart.register(ChartDataLabels);
 
     // =========================================================
-    // KUNCI JEMBATAN API: PASTE LINK WEB APP GOOGLE EXEC ANDA DI SINI
+    // KUNCI JEMBATAN API: MASUKKAN URL EXEC WEB APP GAS ANDA
     // =========================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzTTNELUIXfiBqWhxr8kzbf-lUYzmQ0n6in-RUz5MH3j9aIm4eo8W8KPjuRXsQq-oE1Pw/exec"; 
 
@@ -318,7 +313,6 @@
       loadFormOptionsAndLogs(); 
     };
 
-    // MENGGUNAKAN METHOD GET (FETCH)
     function loadDashboardData() {
       const bln = document.getElementById('filterBulan').value;
       const thn = document.getElementById('filterTahun').value;
@@ -329,7 +323,6 @@
         .catch(err => console.error("Error load dashboard:", err));
     }
 
-    // MENGGUNAKAN METHOD POST (FETCH)
     function saveManualBudget() {
       const bln = document.getElementById('filterBulan').value;
       const thn = document.getElementById('filterTahun').value;
@@ -408,75 +401,77 @@
         });
       }
 
-      function updateCharts(data, pctH, pctR) {
-  if(chartKontribusiInstance) chartKontribusiInstance.destroy();
-  if(chartKategoriInstance) chartKategoriInstance.destroy();
-  if(chartMingguanInstance) chartMingguanInstance.destroy();
-
-  // Chart Kontribusi
-  chartKontribusiInstance = new Chart(document.getElementById('chartKontribusi'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Harley', 'Rachel'],
-      datasets: [{ data: [pctH, pctR], backgroundColor: ['#3b82f6', '#ec4899'] }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // Mengunci ukuran sesuai kotak wadah HTML
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-          color: '#ffffff',
-          font: { weight: 'bold', size: 11 },
-          formatter: (value) => value > 0 ? value + '%' : ''
-        }
-      }
+      updateCharts(data, pctH, pctR);
     }
-  });
 
-  // Chart Kategori (Sekarang sudah ditambahkan pengunci rasio)
-  let katLabels = Object.keys(data.kategori);
-  let katValues = Object.values(data.kategori);
-  chartKategoriInstance = new Chart(document.getElementById('chartKategori'), {
-    type: 'doughnut',
-    data: {
-      labels: katLabels,
-      datasets: [{ data: katValues, backgroundColor: ['#3b82f6', '#f97316', '#22c55e', '#eab308', '#a855f7', '#6366f1'] }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // FIX UTAMA: Sekarang chart kategori patuh pada batas h-36 wadah
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-          color: '#ffffff',
-          font: { weight: 'bold', size: 10 },
-          formatter: (value, context) => {
-            const dataset = context.chart.data.datasets[0];
-            const total = dataset.data.reduce((acc, val) => acc + val, 0);
-            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-            return percentage > 0 ? percentage + '%' : '';
+    function updateCharts(data, pctH, pctR) {
+      if(chartKontribusiInstance) chartKontribusiInstance.destroy();
+      if(chartKategoriInstance) chartKategoriInstance.destroy();
+      if(chartMingguanInstance) chartMingguanInstance.destroy();
+
+      // Chart Kontribusi (Sudah Terkunci Aman)
+      chartKontribusiInstance = new Chart(document.getElementById('chartKontribusi'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Harley', 'Rachel'],
+          datasets: [{ data: [pctH, pctR], backgroundColor: ['#3b82f6', '#ec4899'] }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // Menuruti batasan w-36 h-36 kotak HTML
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              color: '#ffffff',
+              font: { weight: 'bold', size: 11 },
+              formatter: (value) => value > 0 ? value + '%' : ''
+            }
           }
         }
-      }
+      });
+
+      // Chart Kategori (FIX UTAMA: Pengunci Rasio Rasio Diaktifkan)
+      let katLabels = Object.keys(data.kategori);
+      let katValues = Object.values(data.kategori);
+      chartKategoriInstance = new Chart(document.getElementById('chartKategori'), {
+        type: 'doughnut',
+        data: {
+          labels: katLabels,
+          datasets: [{ data: katValues, backgroundColor: ['#3b82f6', '#f97316', '#22c55e', '#eab308', '#a855f7', '#6366f1'] }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // FIX UTAMA: Sekarang chart patuh penuh dan tidak meluber raksasa
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              color: '#ffffff',
+              font: { weight: 'bold', size: 10 },
+              formatter: (value, context) => {
+                const dataset = context.chart.data.datasets[0];
+                const total = dataset.data.reduce((acc, val) => acc + val, 0);
+                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                return percentage > 0 ? percentage + '%' : '';
+              }
+            }
+          }
+        }
+      });
+
+      // Chart Mingguan
+      chartMingguanInstance = new Chart(document.getElementById('chartMingguan'), {
+        type: 'bar',
+        data: {
+          labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'],
+          datasets: [
+            { label: 'Harley', data: data.mingguanHarley, backgroundColor: '#3b82f6', borderRadius: 4 },
+            { label: 'Rachel', data: data.mingguanRachel, backgroundColor: '#ec4899', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } } }
+      });
     }
-  });
 
-  // Chart Mingguan
-  chartMingguanInstance = new Chart(document.getElementById('chartMingguan'), {
-    type: 'bar',
-    data: {
-      labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'],
-      datasets: [
-        { label: 'Harley', data: data.mingguanHarley, backgroundColor: '#3b82f6', borderRadius: 4 },
-        { label: 'Rachel', data: data.mingguanRachel, backgroundColor: '#ec4899', borderRadius: 4 }
-      ]
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } } }
-  });
-}
-
-    // MEMBACA KATEGORI DAN LOGS VIA GET (FETCH)
     function loadFormOptionsAndLogs() {
       fetch(`${API_URL}?action=getCategories`)
         .then(res => res.json())
@@ -531,7 +526,6 @@
       cetakTabelRiwayat(masterDataRiwayat);
     }
 
-    // MENYIMPAN TRANSAKSI BARU VIA POST (FETCH)
     function submitTransaksi(event) {
       event.preventDefault();
       const btn = document.getElementById('btnSimpan'); btn.disabled = true; btn.innerText = "⏳ Menyimpan...";
