@@ -38,6 +38,19 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 dark:bg-slate-900 dark:text-slate-100">
 
+  <div id="loadingScreen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ease-out">
+    <div class="flex flex-col items-center space-y-4">
+      <div class="relative w-14 h-14">
+        <div class="absolute inset-0 border-4 border-slate-200 dark:border-slate-800 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <div class="text-center space-y-1">
+        <h2 class="text-sm font-black text-slate-800 dark:text-white tracking-widest animate-pulse">EXPENSE TRACKER</h2>
+        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Menyinkronkan Basis Data Cloud...</p>
+      </div>
+    </div>
+  </div>
+
   <div class="fixed inset-0 overflow-y-auto p-4 md:p-6 pb-32">
     <div class="max-w-7xl mx-auto space-y-6">
       
@@ -81,7 +94,6 @@
       </div>
 
       <div id="tab-dashboard" class="tab-content active space-y-6">
-        
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 min-w-0">
           <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
             <div class="flex justify-between items-start w-full">
@@ -166,7 +178,7 @@
           
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
             <div class="flex items-center space-x-2.5">
-              <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-500 text-xl shadow-xs border border-amber-200 dark:border-amber-900/50">🪙</div>
+              <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-500 text-xl shadow-xs border border-amber-200 dark:amber-900/50">🪙</div>
               <div>
                 <p class="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
                 <h3 id="txtTotalSemua" class="text-base font-black text-slate-800 dark:text-white mt-0.5">Rp0</h3>
@@ -449,104 +461,113 @@
 
     function formatRupiah(angka) { return 'Rp' + new Intl.NumberFormat('id-ID').format(Math.round(angka)); }
 
-    // STRUKTUR BARU: LOADING DATA TAHUN MENGGUNAKAN ENGINES CLOUD DATABASE (BUKAN LOCALSTORAGE)
+    // RENDER UTILITY UNTUK DROPDOWN TAHUN CLOUD
+    function renderYearsDropdown(yearsData) {
+      const sel = document.getElementById('filterTahun');
+      const currentVal = sel.value || new Date().getFullYear();
+      sel.innerHTML = '';
+      yearsData.allYears.forEach(y => { sel.innerHTML += `<option value="${y}">${y}</option>`; });
+      if (yearsData.allYears.includes(parseInt(currentVal))) { sel.value = currentVal; } 
+      else { sel.value = new Date().getFullYear(); }
+
+      const container = document.getElementById('listTahunKustomContainer');
+      const listDiv = document.getElementById('listTahunKustom');
+      if (yearsData.customYears.length > 0) {
+        container.classList.remove('hidden');
+        listDiv.innerHTML = '';
+        yearsData.customYears.sort((a,b) => a-b).forEach(y => {
+          listDiv.innerHTML += `
+            <span class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700/60 px-2 py-1 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shadow-xs">
+              ${y}
+              <button type="button" onclick="deleteManualYear(${y})" class="text-red-500 hover:text-red-700 ml-0.5 font-black cursor-pointer text-[11px]">✕</button>
+            </span>
+          `;
+        });
+      } else { container.classList.add('hidden'); }
+    }
+
+    // FUNGSI UTAMA: SINKRONISASI SATU PINTU (BATCH LOAD) SAAT APLIKASI DI-BUKA
+    function initializeApplicationData(bln, thn) {
+      fetch(`${API_URL}?action=getInitialData&bulan=${bln}&tahun=${thn}`)
+        .then(res => res.json())
+        .then(data => {
+          renderYearsDropdown(data.years);
+          document.getElementById('filterTahun').value = thn;
+
+          // Suntik Opsi Kategori Form
+          const selKat = document.getElementById('inputKategori'); selKat.innerHTML = '';
+          data.categories.forEach(k => { selKat.innerHTML += `<option value="${k}">${k}</option>`; });
+
+          // Suntik Opsi Metode Form
+          const selMet = document.getElementById('inputMetode'); selMet.innerHTML = '';
+          data.paymentMethods.forEach(m => { selMet.innerHTML += `<option value="${m}">${m}</option>`; });
+
+          masterDataRiwayat = data.recentTransactions;
+          cetakTabelRiwayat(data.recentTransactions);
+          renderDashboard(data.dashboard);
+
+          // HILANGKAN LOADING OVERLAY SECARA LEMBUT (FADE OUT)
+          const loader = document.getElementById('loadingScreen');
+          if (loader) {
+            loader.classList.add('opacity-0');
+            setTimeout(() => loader.remove(), 500);
+          }
+        })
+        .catch(err => {
+          console.error("Gagal inisialisasi cloud data:", err);
+          showToast("Koneksi cloud terputus", "❌");
+          const loader = document.getElementById('loadingScreen');
+          if (loader) loader.remove();
+        });
+    }
+
     function loadYears(callback) {
       fetch(`${API_URL}?action=getYears`)
         .then(res => res.json())
-        .then(data => {
-          const sel = document.getElementById('filterTahun');
-          const currentVal = sel.value || new Date().getFullYear();
-          sel.innerHTML = '';
-          
-          data.allYears.forEach(y => { sel.innerHTML += `<option value="${y}">${y}</option>`; });
-          
-          if (data.allYears.includes(parseInt(currentVal))) {
-            sel.value = currentVal;
-          } else {
-            sel.value = new Date().getFullYear();
-          }
-
-          const container = document.getElementById('listTahunKustomContainer');
-          const listDiv = document.getElementById('listTahunKustom');
-          
-          if (data.customYears.length > 0) {
-            container.classList.remove('hidden');
-            listDiv.innerHTML = '';
-            data.customYears.sort((a,b) => a-b).forEach(y => {
-              listDiv.innerHTML += `
-                <span class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700/60 px-2 py-1 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shadow-xs">
-                  ${y}
-                  <button type="button" onclick="deleteManualYear(${y})" class="text-red-500 hover:text-red-700 ml-0.5 font-black cursor-pointer text-[11px]" title="Hapus Opsi Tahun ${y}">✕</button>
-                </span>
-              `;
-            });
-          } else {
-            container.classList.add('hidden');
-          }
-          
-          if(callback) callback();
-        })
-        .catch(err => console.error("Error loading cloud years:", err));
+        .then(data => { renderYearsDropdown(data); if(callback) callback(); })
+        .catch(err => console.error(err));
     }
 
     function saveManualYear() {
       const newYearStr = document.getElementById('inputTahunBaru').value.trim();
       if(!newYearStr) { showToast("Masukkan angka tahun valid!", "❌"); return; }
       const newYear = parseInt(newYearStr);
-      
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'addYear', tahun: newYear })
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addYear', tahun: newYear }) })
       .then(res => res.json())
       .then(res => {
         if(res.success) {
           showToast(res.message, "✅");
           document.getElementById('inputTahunBaru').value = '';
           loadYears(() => { loadDashboardData(); });
-        } else {
-          showToast(res.message, "❌");
-        }
-      })
-      .catch(err => showToast("Gagal menyimpan tahun", "❌"));
+        } else { showToast(res.message, "❌"); }
+      }).catch(() => showToast("Gagal menyimpan tahun", "❌"));
     }
 
     function deleteManualYear(year) {
-      if(!confirm(`Hapus opsi tahun ${year}? Menu filter akan disembunyikan, tetapi data transaksi Anda tetap utuh di Spreadsheet.`)) return;
-      
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'deleteYear', tahun: year })
-      })
+      if(!confirm(`Hapus opsi tahun ${year}?`)) return;
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteYear', tahun: year }) })
       .then(res => res.json())
       .then(res => {
-        if(res.success) {
-          showToast(res.message, "✅");
-          loadYears(() => { loadDashboardData(); });
-        } else {
-          showToast(res.message, "❌");
-        }
-      })
-      .catch(err => showToast("Gagal menghapus tahun", "❌"));
+        if(res.success) { showToast(res.message, "✅"); loadYears(() => { loadDashboardData(); }); } 
+        else { showToast(res.message, "❌"); }
+      }).catch(() => showToast("Gagal menghapus tahun", "❌"));
     }
 
     window.onload = function() {
       updateDarkModeButton(document.documentElement.classList.contains('dark'));
       const currentDate = new Date();
-      document.getElementById('filterBulan').value = currentDate.getMonth() + 1;
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+      document.getElementById('filterBulan').value = currentMonth;
       
-      // SINKRONISASI SEBELUM TAMPILAN DASHBOARD DI-LOAD
-      loadYears(() => {
-        loadDashboardData(); 
-        loadFormOptionsAndLogs(); 
-      });
+      // JALANKAN METODE SATU PINTU
+      initializeApplicationData(currentMonth, currentYear);
     };
 
     function loadDashboardData() {
       const bln = document.getElementById('filterBulan').value;
       const thn = document.getElementById('filterTahun').value;
-      if(!thn) return; // Mencegah pemanggilan kosong sebelum data tahun siap
-      
+      if(!thn) return;
       fetch(`${API_URL}?action=getDashboardData&bulan=${bln}&tahun=${thn}`)
         .then(res => res.json())
         .then(renderDashboard)
@@ -558,37 +579,27 @@
       const thn = document.getElementById('filterTahun').value;
       const nominal = document.getElementById('inputSetBudget').value;
       if(!nominal || nominal <= 0) { showToast("Masukkan nominal valid!", "❌"); return; }
-      
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'updateBudget', bulan: bln, tahun: thn, nominal: nominal })
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'updateBudget', bulan: bln, tahun: thn, nominal: nominal }) })
       .then(res => res.json())
-      .then(res => {
-        if(res.success) { showToast(res.message, "✅"); loadDashboardData(); }
-      })
-      .catch(err => showToast("Gagal menyimpan budget", "❌"));
+      .then(res => { if(res.success) { showToast(res.message, "✅"); loadDashboardData(); } })
+      .catch(() => showToast("Gagal menyimpan budget", "❌"));
     }
 
     function saveManualPaymentMethod() {
       const metode = document.getElementById('inputMetodeBaru').value.trim();
       if(!metode) { showToast("Masukkan nama metode valid!", "❌"); return; }
-      
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'addPaymentMethod', metode: metode })
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addPaymentMethod', metode: metode }) })
       .then(res => res.json())
       .then(res => {
         if(res.success) {
           showToast(res.message, "✅");
           document.getElementById('inputMetodeBaru').value = '';
-          loadFormOptionsAndLogs(); 
-        } else {
-          showToast(res.message, "❌");
-        }
-      })
-      .catch(err => showToast("Gagal menyimpan metode", "❌"));
+          fetch(`${API_URL}?action=getPaymentMethods`).then(r => r.json()).then(list => {
+            const sel = document.getElementById('inputMetode'); sel.innerHTML = '';
+            list.forEach(m => { sel.innerHTML += `<option value="${m}">${m}</option>`; });
+          });
+        } else { showToast(res.message, "❌"); }
+      }).catch(() => showToast("Gagal menyimpan metode", "❌"));
     }
 
     function renderDashboard(data) {
@@ -601,7 +612,6 @@
 
       document.getElementById('txtHarley').innerText = formatRupiah(data.totalHarley);
       document.getElementById('txtRachel').innerText = formatRupiah(data.totalRachel);
-      
       document.getElementById('txtBudgetTerpakai').innerText = formatRupiah(data.totalPengeluaran);
       document.getElementById('txtTotalSemua').innerText = formatRupiah(data.totalPengeluaran);
 
@@ -667,7 +677,6 @@
       let pctR = data.totalPengeluaran > 0 ? Math.round((data.totalRachel / data.totalPengeluaran) * 100) : 0;
       document.getElementById('pctHarley').innerText = `${pctH}%`;
       document.getElementById('pctRachel').innerText = `${pctR}%`;
-
       document.getElementById('txtInfoHarley').innerText = `${pctH}% (${formatRupiah(data.totalHarley)})`;
       document.getElementById('txtInfoRachel').innerText = `${pctR}% (${formatRupiah(data.totalRachel)})`;
 
@@ -686,8 +695,7 @@
           tbodyRekap.innerHTML += `
             <tr class="hover:bg-white/60 dark:hover:bg-slate-700/40">
               <td class="py-1.5 font-bold text-slate-600 dark:text-slate-300 truncate flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full shrink-0 inline-block" style="background-color: ${dotColor}"></span>
-                ${key}
+                <span class="w-2 h-2 rounded-full shrink-0 inline-block" style="background-color: ${dotColor}"></span>${key}
               </td>
               <td class="py-1.5 text-right font-black text-slate-900 dark:text-white whitespace-nowrap">${formatRupiah(data.kategori[key])}</td>
             </tr>
@@ -698,19 +706,15 @@
       const tbodyComp = document.getElementById('tabelPerbandingan');
       tbodyComp.innerHTML = '';
       let allCategoriesSet = new Set([...Object.keys(data.kategori), ...Object.keys(data.kategoriBulanLalu || {})]);
-      
       if(allCategoriesSet.size === 0) {
         tbodyComp.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 dark:text-slate-500 font-medium">Belum ada data komparasi</td></tr>`;
       } else {
         allCategoriesSet.forEach(cat => {
           let biayaLalu = (data.kategoriBulanLalu && data.kategoriBulanLalu[cat]) ? data.kategoriBulanLalu[cat] : 0;
           let biayaIni = data.kategori[cat] ? data.kategori[cat] : 0;
-          
           let nominalDiff = Math.abs(biayaIni - biayaLalu);
           let formatDiff = formatRupiah(nominalDiff);
-          let persenPerubahan = 0;
-          let textPerubahan = '';
-          let classStyle = '';
+          let persenPerubahan = 0, textPerubahan = '', classStyle = '';
 
           if (biayaLalu > 0) {
             persenPerubahan = ((biayaIni - biayaLalu) / biayaLalu) * 100;
@@ -728,7 +732,6 @@
             textPerubahan = `↑ ${formatDiff} (100%)`;
             classStyle = "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50";
           }
-
           tbodyComp.innerHTML += `
             <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition-colors">
               <td class="p-3 font-bold text-slate-700 dark:text-slate-300">Net ${cat}</td>
@@ -739,7 +742,6 @@
           `;
         });
       }
-
       updateCharts(data, pctH, pctR);
     }
 
@@ -754,109 +756,43 @@
 
       chartKontribusiInstance = new Chart(document.getElementById('chartKontribusi'), {
         type: 'doughnut',
-        data: {
-          labels: ['Harley', 'Rachel'],
-          datasets: [{ data: [pctH, pctR], backgroundColor: ['#3b82f6', '#ec4899'] }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false, 
-          plugins: {
-            legend: { display: false },
-            datalabels: {
-              color: '#ffffff',
-              font: { weight: 'bold', size: 11 },
-              formatter: (value) => value > 0 ? value + '%' : ''
-            }
-          }
-        }
+        data: { labels: ['Harley', 'Rachel'], datasets: [{ data: [pctH, pctR], backgroundColor: ['#3b82f6', '#ec4899'] }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#ffffff', font: { weight: 'bold', size: 11 }, formatter: (value) => value > 0 ? value + '%' : '' } } }
       });
 
       let katLabels = Object.keys(data.kategori);
       let katValues = Object.values(data.kategori);
       chartKategoriInstance = new Chart(document.getElementById('chartKategori'), {
         type: 'doughnut',
-        data: {
-          labels: katLabels,
-          datasets: [{ data: katValues, backgroundColor: CHART_COLORS }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false, 
-          plugins: {
-            legend: { display: false },
-            datalabels: {
-              color: '#ffffff',
-              font: { weight: 'bold', size: 10 },
-              formatter: (value, context) => {
-                const dataset = context.chart.data.datasets[0];
-                const total = dataset.data.reduce((acc, val) => acc + val, 0);
-                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                return percentage > 0 ? percentage + '%' : '';
-              }
-            }
-          }
-        }
+        data: { labels: katLabels, datasets: [{ data: katValues, backgroundColor: CHART_COLORS }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#ffffff', font: { weight: 'bold', size: 10 }, formatter: (value, context) => { const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0); const percentage = total > 0 ? Math.round((value / total) * 100) : 0; return percentage > 0 ? percentage + '%' : ''; } } } }
       });
 
       chartMingguanInstance = new Chart(document.getElementById('chartMingguan'), {
         type: 'bar',
-        data: {
-          labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'],
-          datasets: [
-            { label: 'Harley', data: data.mingguanHarley, backgroundColor: '#3b82f6', borderRadius: 4 },
-            { label: 'Rachel', data: data.mingguanRachel, backgroundColor: '#ec4899', borderRadius: 4 }
-          ]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false, 
-          plugins: { 
-            datalabels: { display: false },
-            legend: { labels: { color: textChartColor } }
-          },
-          scales: {
-            x: { grid: { color: lineChartColor }, ticks: { color: textChartColor } },
-            y: { grid: { color: lineChartColor }, ticks: { color: textChartColor } }
-          }
-        }
+        data: { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'], datasets: [{ label: 'Harley', data: data.mingguanHarley, backgroundColor: '#3b82f6', borderRadius: 4 }, { label: 'Rachel', data: data.mingguanRachel, backgroundColor: '#ec4899', borderRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { labels: { color: textChartColor } } }, scales: { x: { grid: { color: lineChartColor }, ticks: { color: textChartColor } }, y: { grid: { color: lineChartColor }, ticks: { color: textChartColor } } } }
       });
     }
 
     function loadFormOptionsAndLogs() {
-      fetch(`${API_URL}?action=getCategories`)
-        .then(res => res.json())
-        .then(list => {
-          const sel = document.getElementById('inputKategori'); sel.innerHTML = '';
-          list.forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
-        });
-
-      fetch(`${API_URL}?action=getPaymentMethods`)
-        .then(res => res.json())
-        .then(list => {
-          const sel = document.getElementById('inputMetode'); sel.innerHTML = '';
-          list.forEach(m => { sel.innerHTML += `<option value="${m}">${m}</option>`; });
-        });
-
-      fetch(`${API_URL}?action=getRecentTransactions`)
-        .then(res => res.json())
-        .then(txs => {
-          masterDataRiwayat = txs; 
-          cetakTabelRiwayat(txs);   
-        });
+      fetch(`${API_URL}?action=getCategories`).then(res => res.json()).then(list => {
+        const sel = document.getElementById('inputKategori'); sel.innerHTML = '';
+        list.forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+      });
+      fetch(`${API_URL}?action=getPaymentMethods`).then(res => res.json()).then(list => {
+        const sel = document.getElementById('inputMetode'); sel.innerHTML = '';
+        list.forEach(m => { sel.innerHTML += `<option value="${m}">${m}</option>`; });
+      });
+      fetch(`${API_URL}?action=getRecentTransactions`).then(res => res.json()).then(txs => { masterDataRiwayat = txs; cetakTabelRiwayat(txs); });
     }
 
     function cetakTabelRiwayat(dataArray) {
-      const tbody = document.getElementById('tabelRiwayat'); 
-      tbody.innerHTML = '';
-      if(!dataArray || dataArray.length === 0) { 
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400 dark:text-slate-500 font-medium">Tidak ada transaksi ditemukan</td></tr>`; 
-        return; 
-      }
+      const tbody = document.getElementById('tabelRiwayat'); tbody.innerHTML = '';
+      if(!dataArray || dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400 dark:text-slate-500 font-medium">Tidak ada transaksi ditemukan</td></tr>`; return; }
       dataArray.forEach(t => {
         let color = t.user === 'Harley' ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400' : 'bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-400';
         let escapedKet = (t.keterangan || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
-
         tbody.innerHTML += `
           <tr class="border-b border-slate-100 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-700/20">
             <td class="p-2 whitespace-nowrap dark:text-slate-300">${t.tanggal}</td>
@@ -866,11 +802,10 @@
             <td class="p-2 text-slate-400 dark:text-slate-400 max-w-[140px] truncate">${t.keterangan || '-'}</td>
             <td class="p-2 text-right font-bold text-slate-800 dark:text-white whitespace-nowrap">${formatRupiah(t.jumlah)}</td>
             <td class="p-2 text-center space-x-1.5 whitespace-nowrap">
-              <button onclick="siapkanEdit('${t.id}', '${t.tanggal}', '${t.user}', '${t.kategori}', ${t.jumlah}, '${escapedKet}', '${t.metode || 'Cash'}')" class="text-blue-500 hover:text-blue-700 font-bold cursor-pointer" title="Edit">✏️</button>
-              <button onclick="hapusTransaksi('${t.id}')" class="text-red-500 hover:text-red-700 font-bold cursor-pointer" title="Hapus">🗑️</button>
+              <button onclick="siapkanEdit('${t.id}', '${t.tanggal}', '${t.user}', '${t.kategori}', ${t.jumlah}, '${escapedKet}', '${t.metode || 'Cash'}')" class="text-blue-500 hover:text-blue-700 font-bold cursor-pointer">✏️</button>
+              <button onclick="hapusTransaksi('${t.id}')" class="text-red-500 hover:text-red-700 font-bold cursor-pointer">🗑️</button>
             </td>
-          </tr>
-        `;
+          </tr>`;
       });
     }
 
@@ -878,28 +813,14 @@
       const mulai = document.getElementById('filterHistoriMulai').value;
       const selesai = document.getElementById('filterHistoriSelesai').value;
       const q = document.getElementById('searchHistori').value.toLowerCase().trim();
-      
       let hasilFilter = masterDataRiwayat;
       if(mulai) hasilFilter = hasilFilter.filter(t => t.tanggal >= mulai);
       if(selesai) hasilFilter = hasilFilter.filter(t => t.tanggal <= selesai);
-      
-      if(q) {
-        hasilFilter = hasilFilter.filter(t => 
-          t.user.toLowerCase().includes(q) || 
-          t.kategori.toLowerCase().includes(q) || 
-          (t.metode && t.metode.toLowerCase().includes(q)) ||
-          (t.keterangan && t.keterangan.toLowerCase().includes(q))
-        );
-      }
+      if(q) { hasilFilter = hasilFilter.filter(t => t.user.toLowerCase().includes(q) || t.kategori.toLowerCase().includes(q) || (t.metode && t.metode.toLowerCase().includes(q)) || (t.keterangan && t.keterangan.toLowerCase().includes(q))); }
       cetakTabelRiwayat(hasilFilter);
     }
 
-    function clearFilterHistori() {
-      document.getElementById('searchHistori').value = '';
-      document.getElementById('filterHistoriMulai').value = '';
-      document.getElementById('filterHistoriSelesai').value = '';
-      cetakTabelRiwayat(masterDataRiwayat);
-    }
+    function clearFilterHistori() { document.getElementById('searchHistori').value = ''; document.getElementById('filterHistoriMulai').value = ''; document.getElementById('filterHistoriSelesai').value = ''; cetakTabelRiwayat(masterDataRiwayat); }
 
     function siapkanEdit(id, tanggal, user, kategori, jumlah, keterangan, metode) {
       editModeId = id;
@@ -907,16 +828,12 @@
       document.getElementById('btnSimpan').innerText = "✏️ Perbarui Transaksi";
       document.getElementById('btnSimpan').className = "w-full bg-blue-600 text-white py-2 rounded-xl font-bold text-xs shadow-md hover:bg-blue-700 transition";
       document.getElementById('btnBatalEdit').classList.remove('hidden');
-
       document.getElementById('inputTanggal').value = tanggal;
       document.getElementById('inputKategori').value = kategori;
       document.getElementById('inputJumlah').value = jumlah;
       document.getElementById('inputKeterangan').value = keterangan;
       document.getElementById('inputMetode').value = metode || 'Cash';
-
-      if(user === 'Harley') document.getElementById('radioHarley').checked = true;
-      else document.getElementById('radioRachel').checked = true;
-
+      if(user === 'Harley') document.getElementById('radioHarley').checked = true; else document.getElementById('radioRachel').checked = true;
       switchTab('input');
     }
 
@@ -926,75 +843,26 @@
       document.getElementById('btnSimpan').innerText = "🚀 Simpan Transaksi";
       document.getElementById('btnSimpan').className = "w-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition";
       document.getElementById('btnBatalEdit').className = "hidden w-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 py-2 rounded-xl font-bold text-xs transition";
-      
-      document.getElementById('inputJumlah').value = '';
-      document.getElementById('inputKeterangan').value = '';
-      document.getElementById('inputMetode').selectedIndex = 0;
-      document.getElementById('inputTanggal').value = new Date().toISOString().split('T')[0];
+      document.getElementById('inputJumlah').value = ''; document.getElementById('inputKeterangan').value = ''; document.getElementById('inputTanggal').value = new Date().toISOString().split('T')[0];
     }
 
     function submitTransaksi(event) {
       event.preventDefault();
-      const btn = document.getElementById('btnSimpan'); 
-      btn.disabled = true; 
-      btn.innerText = "⏳ Memproses...";
-      
-      const formData = {
-        user: document.querySelector('input[name="user"]:checked').value,
-        tanggal: document.getElementById('inputTanggal').value,
-        kategori: document.getElementById('inputKategori').value,
-        jumlah: document.getElementById('inputJumlah').value,
-        keterangan: document.getElementById('inputKeterangan').value,
-        metode: document.getElementById('inputMetode').value
-      };
-
-      const payload = {
-        action: editModeId ? 'editTransaction' : 'addTransaction',
-        id: editModeId,
-        formData: formData
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
+      const btn = document.getElementById('btnSimpan'); btn.disabled = true; btn.innerText = "⏳ Memproses...";
+      const formData = { user: document.querySelector('input[name="user"]:checked').value, tanggal: document.getElementById('inputTanggal').value, kategori: document.getElementById('inputKategori').value, jumlah: document.getElementById('inputJumlah').value, keterangan: document.getElementById('inputKeterangan').value, metode: document.getElementById('inputMetode').value };
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: editModeId ? 'editTransaction' : 'addTransaction', id: editModeId, formData: formData }) })
       .then(res => res.json())
-      .then(res => {
-        btn.disabled = false;
-        if(res.success) {
-          showToast(res.message, "✅");
-          resetFormState();
-          loadDashboardData(); 
-          loadFormOptionsAndLogs();
-        } else {
-          showToast(res.message, "❌");
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        resetFormState();
-        showToast("Koneksi API Gagal", "❌");
-      });
+      .then(res => { btn.disabled = false; if(res.success) { showToast(res.message, "✅"); resetFormState(); loadDashboardData(); loadFormOptionsAndLogs(); } else { showToast(res.message, "❌"); } })
+      .catch(() => { btn.disabled = false; resetFormState(); showToast("Koneksi API Gagal", "❌"); });
     }
 
     function hapusTransaksi(id) {
-      if(!confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) return;
+      if(!confirm("Apakah Anda yakin?")) return;
       showToast("Sedang menghapus...", "⏳");
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'deleteTransaction', id: id })
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTransaction', id: id }) })
       .then(res => res.json())
-      .then(res => {
-        if(res.success) {
-          showToast(res.message, "✅");
-          loadDashboardData(); 
-          loadFormOptionsAndLogs();
-        } else {
-          showToast(res.message, "❌");
-        }
-      })
-      .catch(err => showToast("Koneksi API Gagal", "❌"));
+      .then(res => { if(res.success) { showToast(res.message, "✅"); loadDashboardData(); loadFormOptionsAndLogs(); } else { showToast(res.message, "❌"); } })
+      .catch(() => showToast("Koneksi API Gagal", "❌"));
     }
   </script>
 </body>
