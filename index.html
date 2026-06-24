@@ -69,9 +69,15 @@
         
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 min-w-0">
           <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
-            <div>
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Budget</p>
-              <h3 id="txtBudget" class="text-lg font-black text-blue-600 mt-0.5 tracking-tight">Rp0</h3>
+            <div class="flex justify-between items-start w-full">
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Budget</p>
+                <h3 id="txtBudget" class="text-sm sm:text-base font-black text-blue-600 mt-0.5 tracking-tight">Rp0</h3>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sisa Budget</p>
+                <h3 id="txtSisaBudget" class="text-sm sm:text-base font-black text-emerald-600 mt-0.5 tracking-tight">Rp0</h3>
+              </div>
             </div>
             <div class="mt-2">
               <div class="flex justify-between text-[9px] font-bold text-slate-500 mb-0.5">
@@ -353,6 +359,17 @@
       
       document.getElementById('txtBudgetTerpakai').innerText = formatRupiah(data.totalPengeluaran);
       document.getElementById('txtTotalSemua').innerText = formatRupiah(data.totalPengeluaran);
+
+      // JALUR LOGIKA BARU KONDISIONAL UNTUK MENGULAS SISA ANGGARAN BERJALAN
+      let sisaBudget = data.budget - data.totalPengeluaran;
+      const lblSisaBudget = document.getElementById('txtSisaBudget');
+      lblSisaBudget.innerText = formatRupiah(sisaBudget);
+      
+      if (sisaBudget < 0) {
+        lblSisaBudget.className = "text-sm sm:text-base font-black text-red-600 mt-0.5 tracking-tight";
+      } else {
+        lblSisaBudget.className = "text-sm sm:text-base font-black text-emerald-600 mt-0.5 tracking-tight";
+      }
 
       let pctTerpakai = data.budget > 0 ? Math.round((data.totalPengeluaran / data.budget) * 100) : 0;
       document.getElementById('txtPersenTerpakai').innerText = `Terpakai: ${pctTerpakai}%`;
