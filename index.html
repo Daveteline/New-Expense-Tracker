@@ -923,8 +923,8 @@
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#ffffff', font: { weight: 'bold', size: 11 }, formatter: (value) => value > 0 ? value + '%' : '' } } }
       });
 
-      let katLabels = Object.keys(data.kategori);
-      let katValues = Object.values(data.kategori);
+      let katLabels = Object.keys(data.kategori).sort((a, b) => data.kategori[b] - data.kategori[a]);
+      let katValues = katLabels.map(key => data.kategori[key]);
       chartKategoriInstance = new Chart(document.getElementById('chartKategori'), {
         type: 'doughnut',
         data: { labels: katLabels, datasets: [{ data: katValues, backgroundColor: CHART_COLORS }] },
