@@ -38,7 +38,6 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 dark:bg-slate-900 dark:text-slate-100">
 
-  <!-- ANIMASI LOADING OVERLAY PREMIUM -->
   <div id="loadingScreen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ease-out">
     <div class="flex flex-col items-center space-y-4">
       <div class="relative w-14 h-14">
@@ -55,7 +54,6 @@
   <div class="fixed inset-0 overflow-y-auto p-4 md:p-6 pb-32">
     <div class="max-w-7xl mx-auto space-y-6">
       
-      <!-- HEADER FIXED ZONE -->
       <div class="sticky top-0 z-50 bg-[#f8fafc] dark:bg-slate-900 -mx-4 md:-mx-6 px-4 md:px-6 pt-1 pb-4 transition-colors">
         <div class="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-700/80 gap-4">
           <div class="flex items-center space-x-2">
@@ -95,9 +93,7 @@
         <span id="toastIcon">💡</span> <span id="toastMessage">Sistem Ready</span>
       </div>
 
-      <!-- Tab Dashboard -->
       <div id="tab-dashboard" class="tab-content active space-y-6">
-        <!-- Baris Metrik Atas -->
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 min-w-0">
           <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
             <div class="flex justify-between items-start w-full">
@@ -124,7 +120,7 @@
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-amber-50 dark:bg-amber-950/40 rounded-lg text-amber-500 shrink-0">📅</div>
             <div class="min-w-0">
               <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Hari Ini</p>
-              <h3 id="txtHariIni" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 tracking-tight">Rp0</h3>
+              <h3 id="txtHariIni" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white tracking-tight">Rp0</h3>
               <div id="lblHariIniTren" class="text-[9px] font-bold mt-0.5 text-slate-400">-</div>
             </div>
           </div>
@@ -133,7 +129,7 @@
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-purple-50 dark:bg-purple-950/40 rounded-lg text-purple-500 shrink-0">🗓️</div>
             <div class="min-w-0">
               <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Minggu Ini</p>
-              <h3 id="txtMingguIni" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 tracking-tight">Rp0</h3>
+              <h3 id="txtMingguIni" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white tracking-tight">Rp0</h3>
               <div id="lblMingguIniTren" class="text-[9px] font-bold mt-0.5 text-slate-400">-</div>
             </div>
           </div>
@@ -142,7 +138,7 @@
             <div class="text-base p-1.5 sm:text-xl sm:p-2 bg-indigo-50 dark:bg-indigo-950/40 rounded-lg text-indigo-500 shrink-0">📈</div>
             <div class="min-w-0">
               <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Rata-Rata Harian</p>
-              <h3 id="txtRataRata" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 tracking-tight">Rp0</h3>
+              <h3 id="txtRataRata" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white tracking-tight">Rp0</h3>
               <div id="lblRataRataTren" class="text-[9px] font-bold mt-0.5 text-slate-400">-</div>
             </div>
           </div>
@@ -157,7 +153,6 @@
           </div>
         </div>
 
-        <!-- User & Core Value Cards Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex items-center justify-between">
             <div class="flex items-center space-x-2.5">
@@ -215,7 +210,6 @@
           </div>
         </div>
 
-        <!-- Bagian Grafik -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs">
             <h4 class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-4 uppercase tracking-wider">Bagian Kontribusi Anggaran</h4>
@@ -255,11 +249,9 @@
           <div class="h-44"><canvas id="chartMingguan"></canvas></div>
         </div>
 
-        <!-- BENTO GRID STATISTIK MIKRO BULANAN -->
         <div class="pt-2">
           <h4 class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-3 uppercase tracking-wider text-center lg:text-left">📊 Sorotan Statistik Bulan Ini (Bento Insights)</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Bento 1: Kategori Terbesar -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
               <div class="flex justify-between items-start">
                 <span class="text-xl">👑</span>
@@ -271,7 +263,6 @@
                 <p id="bentoKategoriAngka" class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">Rp0 (0%)</p>
               </div>
             </div>
-            <!-- Bento 2: Transaksi Terbesar -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
               <div class="flex justify-between items-start">
                 <span class="text-xl">⚓</span>
@@ -283,7 +274,6 @@
                 <p id="bentoTxKet" class="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-0.5 truncate">-</p>
               </div>
             </div>
-            <!-- Bento 3: Hari Terboros -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
               <div class="flex justify-between items-start">
                 <span class="text-xl">⚡</span>
@@ -295,7 +285,6 @@
                 <p id="bentoHariAngka" class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">Rp0</p>
               </div>
             </div>
-            <!-- Bento 4: Rata-rata per Tx -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
               <div class="flex justify-between items-start">
                 <span class="text-xl">🧮</span>
@@ -311,10 +300,8 @@
         </div>
       </div>
 
-      <!-- Tab Perbandingan Komparatif -->
       <div id="tab-comparison" class="tab-content space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Kartu 1: Ringkasan Arus Finansial -->
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
             <div>
               <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Ringkasan Arus Finansial</span>
@@ -322,7 +309,6 @@
             </div>
             <p id="compMainDesc" class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-medium leading-relaxed">-</p>
           </div>
-          <!-- Kartu 2: Top Movers Kategori -->
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
             <div>
               <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Top Movers Kategori</span>
@@ -332,7 +318,6 @@
               </div>
             </div>
           </div>
-          <!-- Kartu 3: Pergeseran Kontribusi User -->
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs flex flex-col justify-between">
             <div>
               <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Dinamika Alokasi Pengguna (MoM)</span>
@@ -344,7 +329,6 @@
           </div>
         </div>
 
-        <!-- Side-by-Side Bar Chart & Tabel Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs lg:col-span-2">
             <h4 class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-4 uppercase tracking-wider text-center lg:text-left">📊 Perbandingan Alokasi Kategori (Bulan Lalu vs Bulan Ini)</h4>
@@ -371,7 +355,6 @@
           </div>
         </div>
 
-       <!-- BOX ANALISIS UTAMA: GEMINI AI SMART INSIGHTS (MANUAL TRIGGER EDITION) -->
         <div class="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-slate-800/40 dark:to-slate-800/80 p-5 rounded-2xl border border-blue-100/60 dark:border-indigo-900/40 shadow-xs space-y-3">
           <div class="flex items-center justify-between border-b border-blue-100 dark:border-slate-700 pb-2">
             <div class="flex items-center space-x-2">
@@ -379,22 +362,16 @@
               <h3 class="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">Summary Rapor Finansial (Gemini AI Smart Insight)</h3>
             </div>
             
-            <!-- TOMBOL PREMIUM MANUAL TRIGGER -->
             <button id="btn-generate-ai" onclick="triggerAiInsight()" class="cursor-pointer px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-[10px] font-black rounded-xl transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
               <span>⚡ Ambil Analisis AI</span>
             </button>
           </div>
           
-          <!-- TEMPAT TEKS GEMINI DIHASILKAN -->
           <div id="aiInsightBox" class="text-xs font-medium text-slate-700 dark:text-slate-300 leading-relaxed min-h-[40px] flex items-center">
             <span class="text-slate-400 dark:text-slate-500 italic">Klik tombol "Ambil Analisis AI" di kanan atas untuk menyuruh Gemini menyusun laporan perkembangan finansial kalian secara organik.</span>
           </div>
         </div>
-        </div>
-    </div>
-
-      <!-- Tab Input & Kelola Transaksi (CRUD) -->
-      <div id="tab-input" class="tab-content space-y-6">
+      </div> <div id="tab-input" class="tab-content space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-xs space-y-4">
             <h3 id="judulForm" class="text-sm font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-700 pb-2">📌 Catatan Baru</h3>
@@ -467,10 +444,8 @@
         </div>
       </div>
 
-      <!-- Tab Pengaturan -->
       <div id="tab-budget" class="tab-content space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          <!-- Form Budget -->
           <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-md space-y-4">
             <div class="flex items-center space-x-2 border-b border-slate-100 dark:border-slate-700 pb-2">
               <span class="text-xl">💰</span>
@@ -484,7 +459,6 @@
             <button onclick="saveManualBudget()" class="w-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">💾 Simpan Target Anggaran</button>
           </div>
 
-          <!-- Menu Tambah Metode Pembayaran -->
           <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-md space-y-4">
             <div class="flex items-center space-x-2 border-b border-slate-100 dark:border-slate-700 pb-2">
               <span class="text-xl">💳</span>
@@ -498,7 +472,6 @@
             <button onclick="saveManualPaymentMethod()" class="w-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">➕ Daftarkan Metode Baru</button>
           </div>
 
-          <!-- Menu Kelola Opsi Tahun -->
           <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-md space-y-4">
             <div class="flex items-center space-x-2 border-b border-slate-100 dark:border-slate-700 pb-2">
               <span class="text-xl">📅</span>
@@ -527,7 +500,7 @@
     Chart.register(ChartDataLabels);
 
     // =========================================================
-    // KUNCI JEMBATAN API: TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT (/exec) LU DI SINI
+    // KUNCI JEMBATAN API: URL WEB APP GOOGLE APPS SCRIPT LU
     // =========================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzphqPi0dx9GnkUKRkvdENzeYg6CoNKqWgQytM9-rArjUBJYk0hTnjlQR3Cfj8KDjdulg/exec"; 
 
@@ -686,11 +659,26 @@
       });
     }
 
-        function triggerAiInsight() {
+    // =========================================================
+    // ENGINE EKSTRAKTOR DATA UNTUK PROMPT AI GEMINI (ANTI-CRASH)
+    // =========================================================
+    function kumpulkanDataKomparatif() {
+      if (!window.lastDashboardData) return "Belum ada inisialisasi rekap data bulanan.";
+      const d = window.lastDashboardData;
+      let s = `Rangkuman Keuangan Bulanan:\n`;
+      s += `- Total Biaya Terpakai: ${formatRupiah(d.totalPengeluaran)} dari plafon ${formatRupiah(d.budget)}\n`;
+      s += `- Porsi Kontribusi: Harley (${formatRupiah(d.totalHarley)}), Rachel (${formatRupiah(d.totalRachel)})\n`;
+      if (d.kategori) {
+        s += `Alokasi Biaya per Kategori saat ini:\n`;
+        Object.keys(d.kategori).forEach(k => { s += `  * ${k}: ${formatRupiah(d.kategori[k])}\n`; });
+      }
+      return s;
+    }
+
+    function triggerAiInsight() {
       const btn = document.getElementById('btn-generate-ai');
       const box = document.getElementById('aiInsightBox');
       
-      // 1. Setel Efek Loading
       btn.disabled = true;
       btn.innerHTML = `
         <div class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -704,54 +692,39 @@
         </div>
       `;
     
-      let promptData = "";
-      
-      // ANTISIPASI CRASH: Mencegah loading macet selamanya
-      try {
-        if (typeof kumpulkanDataKomparatif === "function") {
-          promptData = kumpulkanDataKomparatif();
-        } else {
-          // Jalur alternatif mengambil teks mentah dari tabel rincian data jika nama fungsi lu berbeda
-          const tabelData = document.querySelector('#tabelRincianData') || document.querySelector('table');
-          promptData = tabelData ? tabelData.innerText : "Data pengeluaran bulan ini.";
-        }
-      } catch (err) {
-        console.error(err);
-        box.innerHTML = `<span class="text-amber-500">⚠️ Gagal membaca data tabel. Silakan periksa konsol browser lu, Bro.</span>`;
-        btn.disabled = false;
-        btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
-        return;
-      }
+      let promptData = kumpulkanDataKomparatif();
     
-      // 2. Tembak langsung ke Web App Google Apps Script
+      // Tembak ke Web App Google Apps Script
       fetch(`${API_URL}?action=getGemini&data=${encodeURIComponent(promptData)}`)
         .then(res => res.json())
         .then(response => {
-      // Pengecekan aman: pastikan response dan response.text ada isinya dulu sebelum di-includes
-      if (response && response.success) {
-        box.innerText = response.text;
-      } else {
-        const errorMsg = (response && response.text) ? response.text : "Error tidak diketahui";
-        
-        if (errorMsg.includes("429") || errorMsg.includes("quota") || errorMsg.includes("Limit")) {
-          box.innerHTML = `⚠️ <span class="text-amber-500 dark:text-amber-400 font-bold">Server Gemini lagi ambil napas (Limit Gratisan 5x/menit). Tunggu sekitar 20 detik, lalu klik tombol lagi ya, Bro!</span>`;
-        } else {
-          box.innerText = errorMsg;
-        }
-      }
-    })
+          if (response && response.success) {
+            box.innerText = response.text; 
+          } else {
+            // DETEKTOR TRANSPARAN: Jika text kosong, bongkar string object respons riil dari backend
+            const errorMsg = response.text || response.error || response.message || JSON.stringify(response);
+            
+            if (errorMsg.includes("429") || errorMsg.includes("quota") || errorMsg.includes("Limit")) {
+              box.innerHTML = `⚠️ <span class="text-amber-500 dark:text-amber-400 font-bold">Server Gemini lagi ambil napas (Limit Gratisan 5x/menit). Tunggu sekitar 20 detik, lalu klik tombol lagi ya, Bro!</span>`;
+            } else {
+              box.innerHTML = `❌ <span class="text-red-500 font-semibold">Gagal membaca analisis. Detail Log: ${errorMsg}</span>`;
+            }
+          }
+        })
         .catch(err => {
           console.error(err);
           box.innerHTML = `<span class="text-red-400 font-semibold">Gagal terhubung ke jembatan Google Apps Script Cloud.</span>`;
         })
         .finally(() => {
-          // 3. Kembalikan tombol ke kondisi semula
           btn.disabled = false;
           btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
         });
     }
     
     function renderDashboard(data) {
+      // Simpan data di window scope agar fungsi AI bisa membacanya setiap saat
+      window.lastDashboardData = data;
+
       document.getElementById('txtBudget').innerText = formatRupiah(data.budget);
       document.getElementById('inputSetBudget').value = data.budget;
       document.getElementById('txtHariIni').innerText = formatRupiah(data.totalHariIni);
@@ -953,7 +926,6 @@
       document.getElementById('compUserR').innerHTML = `${formatRupiah(data.totalRachel)} <span class="${rChange >= 0 ? 'text-red-500' : 'text-emerald-500'} font-bold">${rChange >= 0 ? '↑' : '↓'} ${Math.abs(rChange).toFixed(1)}%</span>`;
 
       updateCharts(data, pctH, pctR, allCategoriesSet);
-      //triggerGeminiInsight(data);
     }
 
     function updateCharts(data, pctH, pctR, allCategoriesSet) {
@@ -1077,7 +1049,7 @@
       editModeId = null;
       document.getElementById('judulForm').innerText = "📌 Catatan Baru";
       document.getElementById('btnSimpan').innerText = "🚀 Simpan Transaksi";
-      document.getElementById('btnSimpan').className = "w-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition";
+      document.getElementById('btnSimpan').className = "w-full bg-slate-950 text-white dark:bg-white dark:text-slate-900 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition";
       document.getElementById('btnBatalEdit').className = "hidden w-full bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 py-2 rounded-xl font-bold text-xs transition";
       document.getElementById('inputJumlah').value = ''; document.getElementById('inputKeterangan').value = ''; document.getElementById('inputTanggal').value = new Date().toISOString().split('T')[0];
     }
@@ -1101,9 +1073,6 @@
       .catch(() => showToast("Koneksi API Gagal", "❌"));
     }
 
-    // =========================================================
-    // MODERATOR UTAMA JALUR AGRESIF DOMContentLoaded (ANTI-MACET FONT)
-    // =========================================================
     document.addEventListener('DOMContentLoaded', function() {
       updateDarkModeButton(document.documentElement.classList.contains('dark'));
       const currentDate = new Date();
