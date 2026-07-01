@@ -390,6 +390,8 @@
             <span class="text-slate-400 dark:text-slate-500 italic">Klik tombol "Ambil Analisis AI" di kanan atas untuk menyuruh Gemini menyusun laporan perkembangan finansial kalian secara organik.</span>
           </div>
         </div>
+        </div>
+    </div>
 
       <!-- Tab Input & Kelola Transaksi (CRUD) -->
       <div id="tab-input" class="tab-content space-y-6">
@@ -684,52 +686,68 @@
       });
     }
 
-         function triggerAiInsight() {
-        const btn = document.getElementById('btn-generate-ai');
-        const box = document.getElementById('aiInsightBox');
-        
-        // 1. Setel State Loading Premium pada Tombol dan Box (Teks diubah sesuai request)
-        btn.disabled = true;
-        btn.innerHTML = `
-          <div class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          <span>Membaca Data...</span>
-        `;
-        
-        box.innerHTML = `
-          <div class="flex items-center space-x-2 text-slate-400 dark:text-slate-500">
-            <div class="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-            <span class="italic animate-pulse">Data sedang dianalisis oleh Gemini... Mohon tunggu sebentar</span>
-          </div>
-        `;
+        function triggerAiInsight() {
+      const btn = document.getElementById('btn-generate-ai');
+      const box = document.getElementById('aiInsightBox');
       
-        // 2. Ambil string teks ringkasan data komparatif dari UI
-        const promptData = kumpulkanDataKomparatif(); 
+      // 1. Setel Efek Loading
+      btn.disabled = true;
+      btn.innerHTML = `
+        <div class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        <span>Membaca Data...</span>
+      `;
       
-        // 3. Tembak langsung ke Web App Google Apps Script
-        fetch(`${API_URL}?action=getGemini&data=${encodeURIComponent(promptData)}`)
-          .then(res => res.json())
-          .then(response => {
-            if (response.success) {
-              box.innerText = response.text; // Untaian kalimat santai dari Gemini muncul di sini
-            } else {
-              // Interseptor cerdas jika terkena limit kuota 5x/menit dari Google
-              if (response.text.includes("429") || response.text.includes("quota") || response.text.includes("Limit")) {
-                box.innerHTML = `⚠️ <span class="text-amber-500 dark:text-amber-400 font-bold">Server Gemini lagi ambil napas (Limit Gratisan 5x/menit). Tunggu sekitar 20 detik, lalu klik tombol lagi ya, Bro!</span>`;
-              } else {
-                box.innerText = response.text;
-              }
-            }
-          })
-          .catch(err => {
-            box.innerHTML = `<span class="text-red-400 font-semibold">Gagal terhubung ke jembatan Google Apps Script Cloud.</span>`;
-          })
-          .finally(() => {
-            // 4. Kembalikan tombol ke kondisi semula setelah proses selesai
-            btn.disabled = false;
-            btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
-          });
+      box.innerHTML = `
+        <div class="flex items-center space-x-2 text-slate-400 dark:text-slate-500">
+          <div class="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <span class="italic animate-pulse">Data sedang dianalisis oleh Gemini... Mohon tunggu sebentar</span>
+        </div>
+      `;
+    
+      let promptData = "";
+      
+      // ANTISIPASI CRASH: Mencegah loading macet selamanya
+      try {
+        if (typeof kumpulkanDataKomparatif === "function") {
+          promptData = kumpulkanDataKomparatif();
+        } else {
+          // Jalur alternatif mengambil teks mentah dari tabel rincian data jika nama fungsi lu berbeda
+          const tabelData = document.querySelector('#tabelRincianData') || document.querySelector('table');
+          promptData = tabelData ? tabelData.innerText : "Data pengeluaran bulan ini.";
+        }
+      } catch (err) {
+        console.error(err);
+        box.innerHTML = `<span class="text-amber-500">⚠️ Gagal membaca data tabel. Silakan periksa konsol browser lu, Bro.</span>`;
+        btn.disabled = false;
+        btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
+        return;
       }
-
+    
+      // 2. Tembak langsung ke Web App Google Apps Script
+      fetch(`${API_URL}?action=getGemini&data=${encodeURIComponent(promptData)}`)
+        .then(res => res.json())
+        .then(response => {
+          if (response.success) {
+            box.innerText = response.text;
+          } else {
+            if (response.text.includes("429") || response.text.includes("quota") || response.text.includes("Limit")) {
+              box.innerHTML = `⚠️ <span class="text-amber-500 dark:text-amber-400 font-bold">Server Gemini lagi ambil napas (Limit Gratisan 5x/menit). Tunggu sekitar 20 detik, lalu klik tombol lagi ya, Bro!</span>`;
+            } else {
+              box.innerText = response.text;
+            }
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          box.innerHTML = `<span class="text-red-400 font-semibold">Gagal terhubung ke jembatan Google Apps Script Cloud.</span>`;
+        })
+        .finally(() => {
+          // 3. Kembalikan tombol ke kondisi semula
+          btn.disabled = false;
+          btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
+        });
+    }
+    
     function renderDashboard(data) {
       document.getElementById('txtBudget').innerText = formatRupiah(data.budget);
       document.getElementById('inputSetBudget').value = data.budget;
