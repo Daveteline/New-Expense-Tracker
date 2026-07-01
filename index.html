@@ -371,20 +371,25 @@
           </div>
         </div>
 
-        <!-- BOX ANALISIS UTAMA: GEMINI AI SMART INSIGHTS -->
+       <!-- BOX ANALISIS UTAMA: GEMINI AI SMART INSIGHTS (MANUAL TRIGGER EDITION) -->
         <div class="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-slate-800/40 dark:to-slate-800/80 p-5 rounded-2xl border border-blue-100/60 dark:border-indigo-900/40 shadow-xs space-y-3">
-          <div class="flex items-center space-x-2 border-b border-blue-100 dark:border-slate-700 pb-2">
-            <span class="text-lg">✨</span>
-            <h3 class="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">Summary Rapor Finansial (Gemini AI Smart Insight)</h3>
-          </div>
-          <div id="aiInsightBox" class="text-xs font-medium text-slate-700 dark:text-slate-300 leading-relaxed min-h-[40px] flex items-center">
-            <div class="flex items-center space-x-2 text-slate-400">
-              <div class="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span>Menunggu data diinisialisasi...</span>
+          <div class="flex items-center justify-between border-b border-blue-100 dark:border-slate-700 pb-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">✨</span>
+              <h3 class="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">Summary Rapor Finansial (Gemini AI Smart Insight)</h3>
             </div>
+            
+            <!-- TOMBOL PREMIUM MANUAL TRIGGER -->
+            <button id="btn-generate-ai" onclick="triggerAiInsight()" class="cursor-pointer px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-[10px] font-black rounded-xl transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span>⚡ Ambil Analisis AI</span>
+            </button>
+          </div>
+          
+          <!-- TEMPAT TEKS GEMINI DIHASILKAN -->
+          <div id="aiInsightBox" class="text-xs font-medium text-slate-700 dark:text-slate-300 leading-relaxed min-h-[40px] flex items-center">
+            <span class="text-slate-400 dark:text-slate-500 italic">Klik tombol "Ambil Analisis AI" di kanan atas untuk menyuruh Gemini menyusun laporan perkembangan finansial kalian secara organik.</span>
           </div>
         </div>
-      </div>
 
       <!-- Tab Input & Kelola Transaksi (CRUD) -->
       <div id="tab-input" class="tab-content space-y-6">
@@ -679,28 +684,51 @@
       });
     }
 
-    function triggerGeminiInsight(data) {
-      const aiBox = document.getElementById('aiInsightBox');
-      aiBox.innerHTML = `
-        <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">
-          <div class="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          <span>Asisten Gemini AI sedang menelaah laporan komparatif bulanan Anda...</span>
-        </div>`;
-
-      let promptStr = `Target Anggaran Bulan ini: ${formatRupiah(data.budget)}. Total pengeluaran bulan lalu: ${formatRupiah(data.totalPengeluaranBulanLalu)}. Total pengeluaran bulan ini: ${formatRupiah(data.totalPengeluaran)}. Kontribusi Harley: ${formatRupiah(data.totalHarley)}. Kontribusi Rachel: ${formatRupiah(data.totalRachel)}. Rincian nominal pengeluaran kategori bulan ini: `;
-      Object.keys(data.kategori).forEach(k => { promptStr += `${k} (${formatRupiah(data.kategori[k])}), `; });
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'getGeminiInsight', promptData: promptStr })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if(res.success) { aiBox.innerHTML = `<p class="text-slate-700 dark:text-slate-200 font-medium">${res.text.trim()}</p>`; } 
-        else { aiBox.innerHTML = `<span class="text-amber-500 font-bold">💡 ${res.text}</span>`; }
-      })
-      .catch(() => { aiBox.innerHTML = `<span class="text-red-500 font-bold">✕ Koneksi AI Terputus. Silakan switch tab untuk memuat ulang.</span>`; });
-    }
+         function triggerAiInsight() {
+        const btn = document.getElementById('btn-generate-ai');
+        const box = document.getElementById('aiInsightBox');
+        
+        // 1. Setel State Loading Premium pada Tombol dan Box (Teks diubah sesuai request)
+        btn.disabled = true;
+        btn.innerHTML = `
+          <div class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span>Membaca Data...</span>
+        `;
+        
+        box.innerHTML = `
+          <div class="flex items-center space-x-2 text-slate-400 dark:text-slate-500">
+            <div class="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <span class="italic animate-pulse">Data sedang dianalisis oleh Gemini... Mohon tunggu sebentar</span>
+          </div>
+        `;
+      
+        // 2. Ambil string teks ringkasan data komparatif dari UI
+        const promptData = kumpulkanDataKomparatif(); 
+      
+        // 3. Tembak langsung ke Web App Google Apps Script
+        fetch(`${API_URL}?action=getGemini&data=${encodeURIComponent(promptData)}`)
+          .then(res => res.json())
+          .then(response => {
+            if (response.success) {
+              box.innerText = response.text; // Untaian kalimat santai dari Gemini muncul di sini
+            } else {
+              // Interseptor cerdas jika terkena limit kuota 5x/menit dari Google
+              if (response.text.includes("429") || response.text.includes("quota") || response.text.includes("Limit")) {
+                box.innerHTML = `⚠️ <span class="text-amber-500 dark:text-amber-400 font-bold">Server Gemini lagi ambil napas (Limit Gratisan 5x/menit). Tunggu sekitar 20 detik, lalu klik tombol lagi ya, Bro!</span>`;
+              } else {
+                box.innerText = response.text;
+              }
+            }
+          })
+          .catch(err => {
+            box.innerHTML = `<span class="text-red-400 font-semibold">Gagal terhubung ke jembatan Google Apps Script Cloud.</span>`;
+          })
+          .finally(() => {
+            // 4. Kembalikan tombol ke kondisi semula setelah proses selesai
+            btn.disabled = false;
+            btn.innerHTML = `<span>⚡ Ambil Analisis AI</span>`;
+          });
+      }
 
     function renderDashboard(data) {
       document.getElementById('txtBudget').innerText = formatRupiah(data.budget);
